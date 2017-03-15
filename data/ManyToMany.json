@@ -1,0 +1,6 @@
+{"group":"A", "actions":[{"action":1}, {"action":2}, {"action":1}, {"action":7}, {"action":10}, {"action":4}]}
+{"group":"B", "actions":[{"action":9}, {"action":3}, {"action":6}, {"action":7}, {"action":8}, {"action":14}]}
+{"group":"C", "actions":[{"action":1}, {"action":12}, {"action":9}, {"action":2}, {"action":11}, {"action":14}]}
+{"group":"D", "actions":[{"action":2}, {"action":3}, {"action":4}, {"action":5}, {"action":13}, {"action":12}]}
+{"group":"C", "actions":[{"action":1}, {"action":12}, {"action":9}, {"action":2}, {"action":11}, {"action":14}]}
+{"group":"C", "actions":[{"action":1}, {"action":2}, {"action":7}, {"action":5}, {"action":8}, {"action":11}]}

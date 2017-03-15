@@ -1,0 +1,14 @@
+{"group":"A", "time":5, "value":3}
+{"group":"B", "time":6, "value":1}
+{"group":"A", "time":7, "value":4}
+{"group":"B", "time":1, "value":1}
+{"group":"A", "time":2, "value":2}
+{"group":"B", "time":3, "value":1}
+{"group":"A", "time":4, "value":2}
+{"group":"B", "time":5, "value":3}
+{"group":"A", "time":6, "value":1}
+{"group":"B", "time":7, "value":4}
+{"group":"A", "time":1, "value":1}
+{"group":"B", "time":2, "value":2}
+{"group":"A", "time":3, "value":1}
+{"group":"B", "time":4, "value":2}
