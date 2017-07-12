@@ -1,7 +1,6 @@
 package com.malaska.spark.training.nested
 
 import org.apache.log4j.{Level, Logger}
-import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.sql.{Row, SparkSession}
 import org.apache.spark.sql.types.{ArrayType, DataType, StructField, StructType}
 
@@ -23,6 +22,7 @@ object JsonNestedExample {
         .appName("my-spark-app")
         .config("spark.some.config.option", "config-value")
         .config("spark.driver.host","127.0.0.1")
+        .config("spark.sql.parquet.compression.codec", "gzip")
         .enableHiveSupport()
         .getOrCreate()
     } else {
@@ -36,22 +36,38 @@ object JsonNestedExample {
 
     val jsonDf = sparkSession.read.json(jsonPath)
 
+    val localJsonDf = jsonDf.collect()
+
+    println("--Df")
     jsonDf.foreach(row => {
       println("row:" + row)
     })
+    println("--local")
+    localJsonDf.foreach(row => {
+      println("row:" + row)
+    })
 
-    jsonDf.createOrReplaceTempView("json")
+    jsonDf.createOrReplaceTempView("json_table")
 
-    jsonDf.printSchema()
+    println("--Tree Schema")
+    jsonDf.schema.printTreeString()
+    println("--")
+    jsonDf.write.saveAsTable("json_hive_table")
+
+    jsonDf.write.saveAsTable("foobar")
+
+    sparkSession.sqlContext.sql("select * from json_hive_table").take(10).foreach(println)
 
     println("--")
-    sparkSession.sqlContext.sql("select group, explode(nested) from json").createOrReplaceTempView("unnested")
+    sparkSession.sqlContext.sql("select group, explode(nested) as n1 from json_table").createOrReplaceTempView("unnested")
 
     sparkSession.sqlContext.sql("select * from unnested").printSchema()
 
     sparkSession.sqlContext.sql("select * from unnested").rdd.foreach(println)
 
-    sparkSession.sqlContext.sql("select group, a.col1, a.col2 from json LATERAL VIEW explode(nested) as a").printSchema()
+    sparkSession.sqlContext.sql("select group, a.col1, a.col2 from json_table LATERAL VIEW explode(nested) as a").printSchema()
+
+    sparkSession.sqlContext.sql("select group, a.col1, a.col2 from json_table LATERAL VIEW explode(nested) as a").rdd.foreach(println)
     println("---")
 /*
     jsonDf.rdd.map(row => {

@@ -24,6 +24,17 @@ object SimpleCustomPartitioner {
       ((group, time), value) //this a tuple with in a tuple
     }).repartitionAndSortWithinPartitions(new SimpleCustomPartitioner(partitions))
 
+    val pairRdd = jsonDf.rdd.map(row => {
+      val group = row.getAs[String]("group")
+      val time = row.getAs[Long]("time")
+      val value = row.getAs[Long]("value")
+      ((group, time), value) //this a tuple with in a tuple
+    })
+
+    pairRdd.reduceByKey(_ + _, 100)
+    pairRdd.reduceByKey(new SimpleCustomPartitioner(partitions), _ + _)
+
+
     partitionedRdd.collect().foreach(r => {
       println(r)
     })

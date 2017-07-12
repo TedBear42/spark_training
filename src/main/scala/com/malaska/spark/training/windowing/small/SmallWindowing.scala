@@ -28,11 +28,14 @@ object SmallWindowing {
       val group = row.getAs[String]("group")
       val time = row.getAs[Long]("time")
       val value = row.getAs[Long]("value")
+      //(key  , value)
       (group, (time, value))
     }).groupByKey().flatMap{case (group, records) =>
+
       var lastValue = 0l
 
       val localList = records.toSeq
+      println("localList.size:" + localList.size)
       localList.sortBy(_._1).map{case (time, value) =>
         val dif = value - lastValue
         lastValue = value
@@ -40,7 +43,7 @@ object SmallWindowing {
       }
     }
 
-    timeDifRdd.collect().foreach(r => {
+    timeDifRdd.take(10).foreach(r => {
       println(r)
     })
 

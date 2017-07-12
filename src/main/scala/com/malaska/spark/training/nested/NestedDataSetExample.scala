@@ -47,15 +47,10 @@ object NestedDataSetExample {
 
 //{"group":"A", "time":5, "value":3, "nested":[{"col":1}, {"col":2}]}
 
-case class GroupBean(group:String, time:Long, value:Long, nested:Array[NestedBean]) extends Serializable {
-  override def toString():String = {
-    "GroupBean(" + group + "," + time + "," + value + ",NestedBean(" + nested.mkString(",") + "))"
-  }
-}
+case class GroupBean(group:String,
+                     time:Long,
+                     value:Long,
+                     nested:Array[NestedBean])
 
 
-case class NestedBean(col1:Long, col2:Long) {
-  override def toString():String = {
-    "(" + col1 + "," + col2 + ")"
-  }
-}
+case class NestedBean(col1:Long, col2:Long)
