@@ -33,7 +33,7 @@ object CountingInAStreamExpUpdateStateByKey {
 
     val lines = ssc.socketTextStream(host, port.toInt)
     val words = lines.flatMap(_.split(" "))
-    val wordCounts = words.map(x => (x, 1))
+    val wordCounts = words.map(word => (word, 1))
       .updateStateByKey((values: Seq[(Int)], state: Option[(Int)]) => {
         var value = state.getOrElse(0)
         values.foreach(i => {
@@ -44,7 +44,11 @@ object CountingInAStreamExpUpdateStateByKey {
 
     //words.map(x => (x, 1)).mapWithState()
 
-    wordCounts.print()
+    wordCounts.foreachRDD(rdd => {
+      rdd.foreachPartition(r => {
+        //write to cassandra
+      })
+    })
     ssc.start()
 
 
