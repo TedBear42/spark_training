@@ -7,9 +7,9 @@ import org.apache.spark.streaming.Seconds
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.hadoop.io.LongWritable
 import java.text.SimpleDateFormat
-import org.apache.hadoop.hbase.HBaseConfiguration
+//import org.apache.hadoop.hbase.HBaseConfiguration
 import org.apache.hadoop.fs.Path
-import org.apache.hadoop.hbase.util.Bytes
+//import org.apache.hadoop.hbase.util.Bytes
 import org.apache.hadoop.io.Text
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat
 import scala.collection.immutable.HashMap
@@ -67,9 +67,9 @@ object SessionizeData {
     //Here are are loading our HBase Configuration object.  This will have 
     //all the information needed to connect to our HBase cluster.  
     //There is nothing different here from when you normally interact with HBase.
-    val conf = HBaseConfiguration.create();
-    conf.addResource(new Path("/etc/hbase/conf/core-site.xml"));
-    conf.addResource(new Path("/etc/hbase/conf/hbase-site.xml"));
+    //val conf = HBaseConfiguration.create();
+    //conf.addResource(new Path("/etc/hbase/conf/core-site.xml"));
+    //conf.addResource(new Path("/etc/hbase/conf/hbase-site.xml"));
     
     //This is a HBaseContext object.  This is a nice abstraction that will hide 
     //any complex HBase stuff from us so we can focus on our business case

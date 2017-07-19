@@ -21,13 +21,13 @@ object CountingInAStreamExpQueringResults {
         .config("spark.some.config.option", "config-value")
         .config("spark.driver.host", "127.0.0.1")
         .config("spark.sql.parquet.compression.codec", "gzip")
-        .enableHiveSupport()
+        .master("local[3]")
         .getOrCreate()
     } else {
       SparkSession.builder
         .appName("my-spark-app")
         .config("spark.some.config.option", "config-value")
-        .enableHiveSupport()
+        .master("local[3]")
         .getOrCreate()
     }
 

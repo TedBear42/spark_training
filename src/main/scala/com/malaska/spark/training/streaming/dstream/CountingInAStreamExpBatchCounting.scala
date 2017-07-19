@@ -1,9 +1,13 @@
 package com.malaska.spark.training.streaming.dstream
 
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 object CountingInAStreamExpBatchCounting {
+  Logger.getLogger("org").setLevel(Level.OFF)
+  Logger.getLogger("akka").setLevel(Level.OFF)
+
   def main(args:Array[String]): Unit = {
     val host = args(0)
     val port = args(1)
@@ -19,6 +23,7 @@ object CountingInAStreamExpBatchCounting {
         .config("spark.driver.host","127.0.0.1")
         .config("spark.sql.parquet.compression.codec", "gzip")
         .enableHiveSupport()
+        .master("local[3]")
         .getOrCreate()
     } else {
       SparkSession.builder
@@ -28,15 +33,21 @@ object CountingInAStreamExpBatchCounting {
         .getOrCreate()
     }
 
-    val ssc = new StreamingContext(sparkSession.sparkContext.getConf, Seconds(1))
+    val ssc = new StreamingContext(sparkSession.sparkContext, Seconds(2))
     ssc.checkpoint(checkpointFolder)
 
     val lines = ssc.socketTextStream(host, port.toInt)
-    val words = lines.flatMap(_.split(" "))
+    val words = lines.flatMap(_.toLowerCase.split(" "))
     val wordCounts = words.map(x => (x, 1)).reduceByKey(_ + _)
-    wordCounts.print()
-    ssc.start()
+    wordCounts.foreachRDD(rdd => {
+      println("{")
+      val localCollection = rdd.collect()
+      println("  size:" + localCollection.length)
+      localCollection.foreach(r => println("  " + r))
+      println("}")
+    })
 
+    ssc.start()
 
     ssc.awaitTermination()
 

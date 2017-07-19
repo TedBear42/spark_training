@@ -22,3 +22,59 @@ Here is an example of building a custom partition
 Windowing is both a complex topic and one that show cases the idea of the Big and the Small.  
 
 - /src/main/scala/com/malaska/spark/training/windowing/
+
+## Spark Streaming Demo Notes
+
+### Single batch counting
+
+Run program
+```
+CountingInAStreamExpBatchCounting localhost 9999 ./checkpoint
+```
+Send it messages
+```
+nc -lk 9999
+hi there
+hi bob
+```
+
+### Live time counting
+Run program
+```
+CountingInAStreamExpUpdateStateByKey localhost 9999 ./checkpoint
+```
+Send it messages
+```
+nc -lk 9999
+hi there
+hi bob
+```
+### Structured Streaming session counting
+Run program
+```
+CountingInAStreamExpGroupBy localhost 9999
+```
+Send it messages
+```
+nc -lk 9999
+hi there
+hi bob
+```
+
+### Structured Streaming session counting Dataset
+Run program
+```
+CountingInAStreamDatasetExpGroupBy localhost 9999
+```
+Send it messages
+```
+nc -lk 9999
+bob,tim,FB,10,123
+bob,tim,FB,11,124
+bob,tim,FB,10,125
+tim,cat,G,20,124
+tim,cat,G,20,125
+tim,cat,G,20,126
+hi bob
+```
+

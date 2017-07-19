@@ -1,9 +1,13 @@
 package com.malaska.spark.training.streaming.dstream
 
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 object CountingInAStreamExpUpdateStateByKey {
+  Logger.getLogger("org").setLevel(Level.OFF)
+  Logger.getLogger("akka").setLevel(Level.OFF)
+
   def main(args:Array[String]): Unit = {
     val host = args(0)
     val port = args(1)
@@ -19,6 +23,7 @@ object CountingInAStreamExpUpdateStateByKey {
         .config("spark.driver.host","127.0.0.1")
         .config("spark.sql.parquet.compression.codec", "gzip")
         .enableHiveSupport()
+        .master("local[3]")
         .getOrCreate()
     } else {
       SparkSession.builder
@@ -28,7 +33,7 @@ object CountingInAStreamExpUpdateStateByKey {
         .getOrCreate()
     }
 
-    val ssc = new StreamingContext(sparkSession.sparkContext.getConf, Seconds(1))
+    val ssc = new StreamingContext(sparkSession.sparkContext, Seconds(1))
     ssc.checkpoint(checkpointFolder)
 
     val lines = ssc.socketTextStream(host, port.toInt)
@@ -42,12 +47,12 @@ object CountingInAStreamExpUpdateStateByKey {
         Some(value)
     })
 
-    //words.map(x => (x, 1)).mapWithState()
-
     wordCounts.foreachRDD(rdd => {
-      rdd.foreachPartition(r => {
-        //write to cassandra
-      })
+      println("{")
+      val localCollection = rdd.collect()
+      println("  size:" + localCollection.length)
+      localCollection.foreach(r => println("  " + r))
+      println("}")
     })
     ssc.start()
 

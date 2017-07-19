@@ -1,14 +1,19 @@
 package com.malaska.spark.training.streaming.structured
 
 import com.malaska.spark.training.streaming.{Message, MessageBuilder}
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.streaming.OutputMode
+import org.apache.spark.sql.streaming.{OutputMode, Trigger}
 import org.apache.spark.sql.functions._
 
 object CountingInAStreamExpGroupBy {
+  Logger.getLogger("org").setLevel(Level.OFF)
+  Logger.getLogger("akka").setLevel(Level.OFF)
+
   def main(args:Array[String]): Unit = {
     val host = args(0)
     val port = args(1)
+    val checkpointFolder = args(2)
 
     val isLocal = true
 
@@ -19,13 +24,13 @@ object CountingInAStreamExpGroupBy {
         .config("spark.some.config.option", "config-value")
         .config("spark.driver.host","127.0.0.1")
         .config("spark.sql.parquet.compression.codec", "gzip")
-        .enableHiveSupport()
+        .master("local[3]")
         .getOrCreate()
     } else {
       SparkSession.builder
         .appName("my-spark-app")
         .config("spark.some.config.option", "config-value")
-        .enableHiveSupport()
+        .master("local[3]")
         .getOrCreate()
     }
 
@@ -37,23 +42,17 @@ object CountingInAStreamExpGroupBy {
       .option("port", port)
       .load()
 
-    val messageDs = socketLines.as[String].map(line => {
-      MessageBuilder.build(line)
-    }).as[Message]
+    val messageDs = socketLines.as[String].flatMap(_.split(" "))
 
-    val tickerCount = messageDs.groupBy("ticker", "destUserId").agg(sum($"price"), avg($"price"))
+    // Generate running word count
+    val wordCounts = messageDs.groupBy("value").count()
 
-    val destCount = messageDs.groupBy("destUser").count()
-
-    val ticketOutput = tickerCount.writeStream.outputMode(OutputMode.Complete())
-      .format("Console")
-      .start()
-    val destOutput = destCount.writeStream.outputMode(OutputMode.Complete())
-      .format("Console")
+    // Start running the query that prints the running counts to the console
+    val query = wordCounts.writeStream
+      .outputMode("complete")
+      .format("console")
       .start()
 
-
-
-    ticketOutput.awaitTermination()
+    query.awaitTermination()
   }
 }
