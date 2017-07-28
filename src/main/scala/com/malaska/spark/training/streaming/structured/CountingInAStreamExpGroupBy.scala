@@ -42,7 +42,8 @@ object CountingInAStreamExpGroupBy {
       .option("port", port)
       .load()
 
-    val messageDs = socketLines.as[String].flatMap(_.split(" "))
+    val messageDs = socketLines.as[String].
+      flatMap(line => line.toLowerCase().split(" "))
 
     // Generate running word count
     val wordCounts = messageDs.groupBy("value").count()

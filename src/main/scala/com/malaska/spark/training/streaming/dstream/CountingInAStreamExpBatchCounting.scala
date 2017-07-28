@@ -37,8 +37,10 @@ object CountingInAStreamExpBatchCounting {
     ssc.checkpoint(checkpointFolder)
 
     val lines = ssc.socketTextStream(host, port.toInt)
-    val words = lines.flatMap(_.toLowerCase.split(" "))
-    val wordCounts = words.map(x => (x, 1)).reduceByKey(_ + _)
+    val words = lines.flatMap(line => line.toLowerCase.split(" "))
+    val wordCounts = words.map(word => (word, 1))
+      .reduceByKey((a,b) => a + b)
+
     wordCounts.foreachRDD(rdd => {
       println("{")
       val localCollection = rdd.collect()

@@ -1,3 +1,3 @@
 v1
-{"batchWatermarkMs":1500463775000,"batchTimestampMs":1500463809153,"conf":{"spark.sql.shuffle.partitions":"200"}}
-503
+{"batchWatermarkMs":0,"batchTimestampMs":1500645815003,"conf":{"spark.sql.shuffle.partitions":"200"}}
+53

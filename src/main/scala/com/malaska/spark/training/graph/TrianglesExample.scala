@@ -56,6 +56,8 @@ object TrianglesExample {
       println("vertexId:" + r._1 + ",triangleCount:" + r._2)
     })
 
+    graph.pageRank(1.1, 1.1)
+
     sparkSession.stop()
   }
 }
