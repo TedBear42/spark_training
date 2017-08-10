@@ -8,7 +8,7 @@ object InfectionPointWindow {
   Logger.getLogger("akka").setLevel(Level.OFF)
 
   def main(args:Array[String]): Unit = {
-    val leadLagJson = args(0)
+    val inflectionPointJson = args(0)
 
     val isLocal = true
 
@@ -32,11 +32,11 @@ object InfectionPointWindow {
 
     import sparkSession.implicits._
 
-    val leadLag = sparkSession.read.json(leadLagJson).as[JsonLeadLag]
+    val inflectionPointDs = sparkSession.read.json(inflectionPointJson).as[JsonInfectionPoint]
 
-    leadLag.createOrReplaceTempView("leadlag")
+    inflectionPointDs.createOrReplaceTempView("inflection_point")
 
-    sparkSession.sql("select * from leadlag").collect().foreach(println)
+    sparkSession.sql("select * from inflection_point").collect().foreach(println)
 
     val leadLagDf = sparkSession.sql("SELECT " +
       "group, ts, " +
@@ -44,9 +44,12 @@ object InfectionPointWindow {
       "AVG(value) OVER (ORDER BY ts rows between 3 preceding and current row) as v_moving_avg, " +
       "Min(value) OVER (ORDER BY ts rows between 3 preceding and current row) as v_moving_avg, " +
       "Max(value) OVER (ORDER BY ts rows between 3 preceding and current row) as v_moving_avg " +
-      "FROM leadlag")
+      "FROM inflection_point " +
+      "where event_type = 'inflection'")
 
     leadLagDf.collect().foreach(println)
 
   }
 }
+
+case class JsonInfectionPoint(group:String, ts:Long, value:Long, event_type:String)
