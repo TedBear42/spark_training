@@ -53,7 +53,6 @@ object NestedTableExample {
       .add("nested", ArrayType(nestedSchema))
 
     val populated2Df = spark.sqlContext.createDataFrame(rowRDD, definedSchema)
-
     println("----")
     populated1Df.collect().foreach(r => println(" BuiltExample:" + r))
 

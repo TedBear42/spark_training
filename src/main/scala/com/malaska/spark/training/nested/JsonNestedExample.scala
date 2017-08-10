@@ -12,9 +12,9 @@ object JsonNestedExample {
 
   def main(args: Array[String]): Unit = {
 
-    val jsonPath = args(0)
-
-    val isLocal = true
+    val isLocal = args(0).equalsIgnoreCase("l")
+    val jsonPath = args(1)
+    val outputTableName = args(2)
 
     val sparkSession = if (isLocal) {
       SparkSession.builder
@@ -52,13 +52,12 @@ object JsonNestedExample {
     println("--Tree Schema")
     jsonDf.schema.printTreeString()
     println("--")
-    jsonDf.write.saveAsTable("json_hive_table")
+    jsonDf.write.saveAsTable(outputTableName)
 
-    jsonDf.write.saveAsTable("foobar")
-
-    sparkSession.sqlContext.sql("select * from json_hive_table").take(10).foreach(println)
+    sparkSession.sqlContext.sql("select * from " + outputTableName).take(10).foreach(println)
 
     println("--")
+    /*
     sparkSession.sqlContext.sql("select group, explode(nested) as n1 from json_table").createOrReplaceTempView("unnested")
 
     sparkSession.sqlContext.sql("select * from unnested").printSchema()
@@ -68,6 +67,7 @@ object JsonNestedExample {
     sparkSession.sqlContext.sql("select group, a.col1, a.col2 from json_table LATERAL VIEW explode(nested) as a").printSchema()
 
     sparkSession.sqlContext.sql("select group, a.col1, a.col2 from json_table LATERAL VIEW explode(nested) as a").rdd.foreach(println)
+    */
     println("---")
 /*
     jsonDf.rdd.map(row => {
