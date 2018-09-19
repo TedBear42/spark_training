@@ -1,3 +1,0 @@
-v1
-{"batchWatermarkMs":0,"batchTimestampMs":1500645810834,"conf":{"spark.sql.shuffle.partitions":"200"}}
-35

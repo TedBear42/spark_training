@@ -49,6 +49,7 @@ nc -lk 9999
 hi there
 hi bob
 ```
+
 ### Structured Streaming session counting
 Run program
 ```
@@ -75,6 +76,18 @@ bob,tim,FB,10,125
 tim,cat,G,20,124
 tim,cat,G,20,125
 tim,cat,G,20,126
+```
+
+### Structured Streaming session counting mapWithState
+Run program
+```
+CountingInAStreamMapWithState localhost 9999
+```
+Send it messages
+```
+nc -lk 9999
+hi there
 hi bob
 ```
+
 
